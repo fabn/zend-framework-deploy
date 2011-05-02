@@ -241,18 +241,15 @@ Capistrano::Configuration.instance(:must_exist).load do
 
     desc <<-DESC
       [internal] Touches up the released code. This is called by update_code \
-      after the basic deploy finishes. It assumes a Rails project was deployed, \
+      after the basic deploy finishes. It assumes a standard ZF project was deployed, \
       so if you are deploying something else, you may want to override this \
       task with your own environment's requirements.
 
       This task will make the release group-writable (if the :group_writable \
       variable is set to true, which is the default). It will then set up \
-      symlinks to the shared directory for the log, system, and tmp/pids \
-      directories, and will lastly touch all assets in public/images, \
-      public/stylesheets, and public/javascripts so that the times are \
-      consistent (so that asset timestamping works).  This touch process \
-      is only carried out if the :normalize_asset_timestamps variable is \
-      set to true, which is the default.
+      symlinks to the shared directory for the data and system, directories. \
+      Lastly it will install Zend Framework library in the library folder \
+      using the install_zf task provided.
     DESC
     task :finalize_update, :except => { :no_release => true } do
       run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
@@ -417,17 +414,6 @@ Capistrano::Configuration.instance(:must_exist).load do
         end
         abort
       end
-    end
-
-    desc <<-DESC
-      Deploys and starts a `cold' application. This is useful if you have not \
-      deployed your application before, or if your application is (for some \
-      other reason) not currently running. It will deploy the code, run any \
-      pending migrations, and then instead of invoking `deploy:restart', it will \
-      invoke `deploy:start' to fire up the application servers.
-    DESC
-    task :cold do
-      update
     end
 
     namespace :pending do

@@ -60,17 +60,17 @@ role :web, "your web-server here"                          # Your HTTP server, A
 
 # multistage patch
 unless stages.empty?
-  files["application/configs/deploy.rb"] << <<-MULTI
+  files["#{CONFIG_DIR}/deploy.rb"] << <<-MULTI
 
 # multistage setup, see https://boxpanel.bluebox.net/public/the_vault/index.php/Capistrano_Multi_Stage_Instructions
-set :stage_dir, "application/configs/deploy" # IMPORTANT!!! Do not remove this line, otherwise multistage won't find your stages
+set :stage_dir, "#{CONFIG_DIR}/deploy" # IMPORTANT!!! Do not remove this line, otherwise multistage won't find your stages
 set :default_stage, "#{stages.first}"
 set :stages, %w(#{stages.join(' ')})
 require 'capistrano/ext/multistage'
 MULTI
   files.merge!(
       stages.inject({}) do |hash, file|
-        hash['application/configs/deploy/' + file + '.rb'] = "# #{file} stage configuration goes here\n"
+        hash["#{CONFIG_DIR}/deploy/" + file + '.rb'] = "# #{file} stage configuration goes here\n"
         hash
       end
   )

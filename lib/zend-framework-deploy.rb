@@ -16,6 +16,10 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   _cset(:application) { abort "Please specify the name of your application, set :application, 'foo'" }
   _cset(:repository)  { abort "Please specify the repository that houses your application's code, set :repository, 'foo'" }
+  # this should be required
+  _cset(:deploy_to) { abort "Please specify where to deploy your application, set :deploy_to, '/some/path'" }
+  # zend framework(s) path installation (we don't have bundler...)
+  _cset(:zf_path) { abort "Please specify where is located zend framework on server, set :zf_path, '/path/to/zend/framework'" }
 
   # =========================================================================
   # These variables may be set in the client capfile if their default values
@@ -25,7 +29,6 @@ Capistrano::Configuration.instance(:must_exist).load do
   _cset :scm, :subversion
   _cset :deploy_via, :checkout
 
-  _cset(:deploy_to) { "/u/apps/#{application}" }
   _cset(:revision)  { source.head }
 
   # =========================================================================
@@ -43,7 +46,7 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   _cset :version_dir,       "releases"
   _cset :shared_dir,        "shared"
-  _cset :shared_children,   [] # Empty!
+  _cset :shared_children,   %w(data)
   _cset :current_dir,       "current"
 
   _cset(:releases_path)     { File.join(deploy_to, version_dir) }

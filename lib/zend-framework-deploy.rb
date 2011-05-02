@@ -217,17 +217,10 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :install_zf, :except => { :no_release => true } do
       version_file = "#{release_path}/application/configs/zf.version"
-      # try to use zf.version in configs folder, otherwise it try to link the folder itself
-      run <<-CMD
-        if [ -d #{zf_path}/ZendFramework-`cat #{version_file}`/library/Zend ]; then
-          ln -s #{zf_path}/ZendFramework-`cat #{version_file}`/library/Zend #{release_path}/library
-          ln -s #{zf_path}/ZendFramework-`cat #{version_file}`/extras/library/ZendX #{release_path}/library
-        fi
-        if [ -d #{zf_path}/library/Zend ]; then
-          ln -s #{zf_path}/library/Zend #{release_path}/library
-          ln -s #{zf_path}/extras/library/ZendX #{release_path}/library
-        fi
-      CMD
+      # try to use zf.version file if exists
+      run "test -f #{version_file} && ln -s #{zf_path}/ZendFramework-`cat #{version_file}`/library/Zend #{zf_path}/ZendFramework-`cat #{version_file}`/extras/library/ZendX #{release_path}/library"
+      # else assume :zf_path is the root of Zend Framework distribution
+      run "test -f #{version_file} || ln -s #{zf_path}/library/Zend #{zf_path}/extras/library/ZendX #{release_path}/library"
     end
 
     desc <<-DESC

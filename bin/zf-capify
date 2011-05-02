@@ -3,6 +3,8 @@
 require 'optparse'
 require 'fileutils'
 
+CONFIG_DIR = 'application/configs'
+
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [path]"
 
@@ -39,10 +41,10 @@ files = {
   "Capfile" => unindent(<<-FILE),
     require 'rubygems'
     require 'zend-framework-deploy'
-    load    'application/configs/deploy'
+    load    '#{CONFIG_DIR}/deploy'
   FILE
 
-  "application/configs/deploy.rb" => 'set :application, "set your application name here"
+  "#{CONFIG_DIR}/deploy.rb" => 'set :application, "set your application name here"
 set :repository,  "set your repository location here"
 
 set :scm, :subversion

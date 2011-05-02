@@ -51,6 +51,7 @@ files = {
 
   "#{CONFIG_DIR}/deploy.rb" => 'set :application, "set your application name here"
 set :repository,  "set your repository location here"
+set :deploy_to, "set path where to deploy application"
 
 set :scm, :subversion
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`

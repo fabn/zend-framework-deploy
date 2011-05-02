@@ -140,6 +140,12 @@ Capistrano::Configuration.instance(:must_exist).load do
     try_sudo(*args)
   end
 
+  # check if remote file exist
+  # inspired by http://stackoverflow.com/questions/1661586/how-can-you-check-to-see-if-a-file-exists-on-the-remote-server-in-capistrano/1662001#1662001
+  def remote_file_exists?(full_path)
+    'true' ==  capture("if [ -e #{full_path} ]; then echo 'true'; fi").strip
+  end
+
   # =========================================================================
   # These are the tasks that are available to help with deploying web apps,
   # and specifically, Rails applications. You can have cap give you a summary
@@ -217,10 +223,14 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :install_zf, :except => { :no_release => true } do
       version_file = "#{release_path}/application/configs/zf.version"
-      # try to use zf.version file if exists
-      run "test -f #{version_file} && ln -s #{zf_path}/ZendFramework-`cat #{version_file}`/library/Zend #{zf_path}/ZendFramework-`cat #{version_file}`/extras/library/ZendX #{release_path}/library"
-      # else assume :zf_path is the root of Zend Framework distribution
-      run "test -f #{version_file} || ln -s #{zf_path}/library/Zend #{zf_path}/extras/library/ZendX #{release_path}/library"
+      # get the zf root as defined in the configuration
+      zf_root = "#{zf_path}"
+      # append version if zf.version file exists
+      zf_root << "/ZendFramework-#{capture("cat #{version_file}").strip}" if remote_file_exists? version_file
+      # check correctness of given version of ZF
+      run "test -d #{zf_root}/library/Zend -a -d #{zf_root}/extras/library/ZendX"
+      # link Zend Framework libraries in the library path
+      run "ln -s #{zf_root}/library/Zend #{zf_root}/extras/library/ZendX #{release_path}/library"
     end
 
     desc <<-DESC

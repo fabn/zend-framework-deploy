@@ -30,6 +30,8 @@ Capistrano::Configuration.instance(:must_exist).load do
   _cset :deploy_via, :checkout
 
   _cset(:revision)  { source.head }
+  # multistage config directory
+  _cset:stage_dir, "application/configs/deploy"
 
   # =========================================================================
   # These variables should NOT be changed unless you are very confident in

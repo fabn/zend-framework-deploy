@@ -63,7 +63,6 @@ unless stages.empty?
   files["#{CONFIG_DIR}/deploy.rb"] << <<-MULTI
 
 # multistage setup, see https://boxpanel.bluebox.net/public/the_vault/index.php/Capistrano_Multi_Stage_Instructions
-set :stage_dir, "#{CONFIG_DIR}/deploy" # IMPORTANT!!! Do not remove this line, otherwise multistage won't find your stages
 set :default_stage, "#{stages.first}"
 set :stages, %w(#{stages.join(' ')})
 require 'capistrano/ext/multistage'

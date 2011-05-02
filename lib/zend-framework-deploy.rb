@@ -48,7 +48,8 @@ Capistrano::Configuration.instance(:must_exist).load do
 
   _cset :version_dir,       "releases"
   _cset :shared_dir,        "shared"
-  _cset :shared_children,   %w(data)
+  # makes directories used by zend framework default project structure, see http://framework.zend.com/manual/en/project-structure.project.html
+  _cset :shared_children,   %w(system data) + %w(cache indexes locales logs sessions uploads).map { |d| File.join("data", d) }
   _cset :current_dir,       "current"
 
   _cset(:releases_path)     { File.join(deploy_to, version_dir) }

@@ -4,9 +4,14 @@ require 'optparse'
 require 'fileutils'
 
 CONFIG_DIR = 'application/configs'
+stages = []
 
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename($0)} [path]"
+
+  opts.on("-m [stage1,stage2]", "--multistage [stage1,stage2]", Array, "Uses multistage configuration") do |stges|
+    stages = stges
+  end
 
   opts.on("-h", "--help", "Displays this help info") do
     puts opts
@@ -52,6 +57,23 @@ set :scm, :subversion
 
 role :web, "your web-server here"                          # Your HTTP server, Apache/etc
 '}
+
+# multistage patch
+unless stages.empty?
+  files["application/configs/deploy.rb"] << <<-MULTI
+# multistage setup, see https://boxpanel.bluebox.net/public/the_vault/index.php/Capistrano_Multi_Stage_Instructions
+set :default_stage, "#{stages.first}"
+set :stages, %w(#{stages.join(' ')})
+require 'capistrano/ext/multistage'
+  MULTI
+  files.merge!(
+      stages.inject({}) do |hash, file|
+        hash['application/configs/deploy/' + file + '.rb'] = "# #{file} stage configuration goes here\n"
+        hash
+      end
+  )
+  puts "Multistage configuration selected, remember to install capistrano-ext gem with '(sudo) gem install capistrano-ext'"
+end
 
 base = ARGV.shift
 files.each do |file, content|

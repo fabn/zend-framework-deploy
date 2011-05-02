@@ -26,7 +26,8 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "bin/zf-capify",
-    "lib/zend-framework-deploy.rb"
+    "lib/zend-framework-deploy.rb",
+    "zend-framework-deploy.gemspec"
   ]
   s.homepage = %q{http://github.com/fabn/zend-framework-deploy}
   s.licenses = ["MIT"]

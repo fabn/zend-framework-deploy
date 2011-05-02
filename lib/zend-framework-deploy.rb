@@ -209,6 +209,28 @@ Capistrano::Configuration.instance(:must_exist).load do
     end
 
     desc <<-DESC
+      Install Zend Framework in library path for the deployed application. \
+      If multiple versions of ZF exists in the :zf_path and a config file \
+      zf.version is found in the application/configs folder, then it try to link \
+      the given version. Otherwise the :zf_path is assumed to be the root path of the \
+      full Zend Framework release.
+    DESC
+    task :install_zf, :except => { :no_release => true } do
+      version_file = "#{release_path}/application/configs/zf.version"
+      # try to use zf.version in configs folder, otherwise it try to link the folder itself
+      run <<-CMD
+        if [ -d #{zf_path}/ZendFramework-`cat #{version_file}`/library/Zend ]; then
+          ln -s #{zf_path}/ZendFramework-`cat #{version_file}`/library/Zend #{release_path}/library
+          ln -s #{zf_path}/ZendFramework-`cat #{version_file}`/extras/library/ZendX #{release_path}/library
+        fi
+        if [ -d #{zf_path}/library/Zend ]; then
+          ln -s #{zf_path}/library/Zend #{release_path}/library
+          ln -s #{zf_path}/extras/library/ZendX #{release_path}/library
+        fi
+      CMD
+    end
+
+    desc <<-DESC
       [internal] Touches up the released code. This is called by update_code \
       after the basic deploy finishes. It assumes a Rails project was deployed, \
       so if you are deploying something else, you may want to override this \
@@ -225,6 +247,15 @@ Capistrano::Configuration.instance(:must_exist).load do
     DESC
     task :finalize_update, :except => { :no_release => true } do
       run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
+
+      # mkdir -p is making sure that the directories are there for some SCM's that don't
+      # save empty folders, link the shared data folder
+      run <<-CMD
+        rm -rf #{latest_release}/data &&
+        ln -s #{shared_path}/data #{latest_release}/data
+      CMD
+      # install Zend Framework in library folder
+      install_zf
     end
 
     desc <<-DESC

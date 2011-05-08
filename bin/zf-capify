@@ -57,7 +57,7 @@ set :zf_path, "set Zend Framework (remote) installation path here"
 set :scm, :subversion
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
-role :web, "your web-server here"                          # Your HTTP server, Apache/etc
+role :web, "your web-server goes here"                          # Your HTTP server, Apache/etc
 '}
 
 # multistage patch
@@ -77,6 +77,15 @@ MULTI
   )
   puts "Multistage configuration selected, remember to install capistrano-ext gem with '[sudo] gem install capistrano-ext'"
 end
+
+# hints to use other gems to improve capistrano experience
+files["#{CONFIG_DIR}/deploy.rb"] << <<-HINTS
+
+# gem install capistrano-tags to enable tag and branches deploying
+# require 'capistrano-tags'
+# gem install capistrano_colors to colorize capistano output
+# require 'capistrano_colors'
+HINTS
 
 base = ARGV.shift
 files.each do |file, content|

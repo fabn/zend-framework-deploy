@@ -18,8 +18,6 @@ Capistrano::Configuration.instance(:must_exist).load do
   _cset(:repository)  { abort "Please specify the repository that houses your application's code, set :repository, 'foo'" }
   # this should be required
   _cset(:deploy_to) { abort "Please specify where to deploy your application, set :deploy_to, '/some/path'" }
-  # zend framework(s) path installation (we don't have bundler...)
-  _cset(:zf_path) { abort "Please specify where is located zend framework on server, set :zf_path, '/path/to/zend/framework'" }
 
   # =========================================================================
   # These variables may be set in the client capfile if their default values
@@ -228,6 +226,11 @@ Capistrano::Configuration.instance(:must_exist).load do
       full Zend Framework release.
     DESC
     task :install_zf, :except => { :no_release => true } do
+      unless exists? :zf_path
+        logger.important "Zend Framework will not be installed in project library because no :zf_path given"
+        logger.important "Enable installation with set :zf_path, '/path/to/zend/framework' in your deploy.rb file"
+        next
+      end
       version_file = "#{release_path}/application/configs/zf.version"
       # get the zf root as defined in the configuration
       zf_root = "#{zf_path}"

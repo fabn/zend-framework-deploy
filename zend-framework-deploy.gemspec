@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{zend-framework-deploy}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Fabio Napoleoni"]
-  s.date = %q{2011-05-03}
+  s.date = %q{2011-05-09}
   s.default_executable = %q{zf-capify}
   s.description = %q{Use this gem to deploy Zend Framework projects with Capistrano. It will adapt Capistrano configuration in order to be used with ZF project structure.}
   s.email = %q{f.napoleoni@gmail.com}
@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     ".document",
+    "CHANGES.md",
     "Gemfile",
     "LICENSE.txt",
     "README.markdown",
